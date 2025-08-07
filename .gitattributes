@@ -1,2 +1,34 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+####MSA
+
+# Step 1: install and load packages
+
+install.packages("BiocManager")
+BiocManager::install("msa")
+
+library(msa)
+library(Biostrings)
+
+# Step 2: Merge FASTA sequences 
+setwd("C:/Users/PARIYA/Desktop/Alignment")
+
+# List and Merge 
+fasta_files <- list.files(pattern = "\\.fasta$")  # or "\\.fa$"
+cat("", file = "merged_sequences.fasta")  
+for (f in fasta_files) {
+  cat(readLines(f), file = "merged_sequences.fasta", sep = "\n", append = TRUE)
+}
+
+# Step 3: Load protein sequences 
+seqs <- readAAStringSet("merged_sequences.fasta")
+seqs  
+
+# Step 4: Run ClustalW
+Sys.setenv(CLUSTALW_PATH = "C:/Program Files/ClustalW2/clustalw2.exe")
+
+alignment <- msaClustalW(seqs)
+
+# Step 4: View and export result
+print(alignment)
+
+writeXStringSet(unmasked(alignment), filepath = "alignment_output.fasta")
+
